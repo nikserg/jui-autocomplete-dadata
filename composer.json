@@ -1,6 +1,7 @@
 {
     "name": "nikserg/jui-autocomplete-dadata",
     "description": "Yii2 JUI Autocomplete with dadata.ru suggestions",
+    "keywords": ["yii2", "extension", "widget", "dadata", "suggestions"],
     "authors": [
         {
             "name": "Nikita Zarubin",
@@ -9,7 +10,7 @@
     ],
     "autoload": {
       "psr-4": {
-        "yii\\jui\\DadataAutoComplete\\": ""
+        "yii\\jui\\": ""
       }
     },
     "require": {
