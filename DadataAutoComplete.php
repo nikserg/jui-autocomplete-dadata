@@ -27,6 +27,12 @@ class DadataAutoComplete extends AutoComplete
      */
     public $additionalParams;
 
+    /**
+     * Js-код обрабочика success аякс-запроса к Дадате. По умолчанию берет unresticted_value
+     * @var JsExpression
+     */
+    public $onSuccess;
+
     protected function getDadataUrl() {
         return $this->dadataUrl;
     }
@@ -43,11 +49,24 @@ class DadataAutoComplete extends AutoComplete
     public function init()
     {
         parent::init(); 
-        if ($this->additionalParams) {
+        if ($this->additionalParams && is_array($this->additionalParams)) {
             $additionalParamsJson = json_encode($this->additionalParams);
+        }
+        elseif ($this->additionalParams && is_string($this->additionalParams)) {
+            $additionalParamsJson = $this->additionalParams;
         }
         else {
             $additionalParamsJson = '{}';
+        }
+        if (!$this->onSuccess) {
+            $this->onSuccess = new JsExpression('function (data) {
+                                    let result = [];
+                                    for (let i in data.suggestions) {
+                                        let row = data.suggestions[i];
+                                        result.push(row.unrestricted_value);
+                                    }
+                                    response(result);
+                                }');
         }
         $this->clientOptions['source'] = new JsExpression("function(request,response){
                             let data = $additionalParamsJson;
@@ -61,14 +80,7 @@ class DadataAutoComplete extends AutoComplete
                                 contentType: 'application/json',
                                 dataType: 'json',
                                 data: JSON.stringify(data),
-                                success: function (data) {
-                                    let result = [];
-                                    for (let i in data.suggestions) {
-                                        let row = data.suggestions[i];
-                                        result.push(row.unrestricted_value);
-                                    }
-                                    response(result);
-                                }
+                                success: ".$this->onSuccess->expression."
                             });
                         }");
     }
