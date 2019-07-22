@@ -83,6 +83,6 @@ class DadataAutoComplete extends AutoComplete
                                 success: ".$this->onSuccess->expression."
                             });
                         }");
-    } 
+    }
 
 }
